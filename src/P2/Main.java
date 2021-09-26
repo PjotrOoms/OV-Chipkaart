@@ -3,6 +3,9 @@ package P2;
 import P3.Adres;
 import P3.AdresDAO;
 import P3.AdresDAOPsql;
+import P4.OVChipkaart;
+import P4.OVChipkaartDAO;
+import P4.OVChipkaartDOAPsql;
 
 import java.sql.*;
 import java.util.List;
@@ -15,9 +18,12 @@ public class Main {
         getConnection();
         ReizigerDAOPsql rdao = new ReizigerDAOPsql(connection);
         AdresDAO adao = new AdresDAOPsql(connection);
+        OVChipkaartDAO odoa = new OVChipkaartDOAPsql(connection);
         rdao.setAdao(adao);
+        rdao.setOdoa(odoa);
 //        testReizigerDAO(rdao);
         testAdresDAO(adao, rdao);
+        testOVChipkaartDAO(rdao);
         closeConnection();
     }
 
@@ -121,5 +127,27 @@ public class Main {
         System.out.println("[Test] AdresDAO.findById() heeft het volgende adres gevonden:");
         Adres adres3 = adao.findByReiziger(pjotr);
         System.out.println(adres3);
+    }
+
+    private static void testOVChipkaartDAO(ReizigerDAO rdao){
+        System.out.println("\n---------- Test OVChipkaartDAO -------------");
+
+
+        // Reiziger toevoegen
+        Reiziger piet = new Reiziger(9, "P", "", "Jansen", java.sql.Date.valueOf("1999-09-09"));
+
+        // Adres aanmaken
+        Adres adres1 = new Adres(9, "4208 BJ", "90", "Ruigenhoek", "Gorinchem", 9);
+
+        // OVChipkaart aanmaken
+        OVChipkaart ovChipkaart = new OVChipkaart(35283, java.sql.Date.valueOf("2021-09-09"), 2, 25.50, 9);
+
+        // Reiziger + adres + ovchipkaart setten
+        piet.setAdres(adres1);
+        piet.setOvChipkaarten(ovChipkaart);
+
+        // Opslaan
+        rdao.save(piet);
+
     }
 }

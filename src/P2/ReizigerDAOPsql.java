@@ -1,6 +1,8 @@
 package P2;
 
 import P3.AdresDAO;
+import P4.OVChipkaart;
+import P4.OVChipkaartDAO;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,12 +14,18 @@ public class ReizigerDAOPsql implements ReizigerDAO{
 
     private AdresDAO adao;
 
+    private OVChipkaartDAO odoa;
+
     public ReizigerDAOPsql(Connection conn){
         this.conn = conn;
     }
 
     public void setAdao(AdresDAO adao) {
         this.adao = adao;
+    }
+
+    public void setOdoa(OVChipkaartDAO odoa) {
+        this.odoa = odoa;
     }
 
     @Override
@@ -32,7 +40,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             pstmt.setString(4, reiziger.getAchternaam());
             pstmt.setDate(5, reiziger.getGeboortedatum());
             adao.save(reiziger.getAdres());
-
+            odoa.save(reiziger.getOvChipkaart());
             pstmt.executeUpdate();
             return true;
 
@@ -70,6 +78,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
 
             pstmt.setInt(1, reiziger.getId());
             adao.delete(reiziger.getAdres());
+            odoa.save(reiziger.getOvChipkaart());
 
             pstmt.executeUpdate();
 

@@ -1,8 +1,11 @@
 package P2;
 
 import P3.Adres;
+import P4.OVChipkaart;
 
 import java.sql.Date;
+import java.util.List;
+import java.util.Set;
 
 public class Reiziger {
     private int id;
@@ -11,6 +14,7 @@ public class Reiziger {
     private String achternaam;
     private Date geboortedatum;
     private Adres adres;
+    private OVChipkaart ovChipkaart;
 
     public Reiziger(int id, String voorletters, String tussenvoegsels, String achternaam, Date geboortedatum) {
         this.id = id;
@@ -50,6 +54,14 @@ public class Reiziger {
 
     public Adres getAdres() {
         return adres;
+    }
+
+    public OVChipkaart getOvChipkaart() {
+        return ovChipkaart;
+    }
+
+    public void setOvChipkaarten(OVChipkaart ovChipkaart) {
+        this.ovChipkaart = ovChipkaart;
     }
 
     public String toString() {
