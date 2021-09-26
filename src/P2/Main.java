@@ -13,11 +13,11 @@ public class Main {
 
     public static void main(String[] args) throws SQLException {
         getConnection();
-        ReizigerDAO rdao = new ReizigerDAOPsql(connection);
+        ReizigerDAOPsql rdao = new ReizigerDAOPsql(connection);
         AdresDAO adao = new AdresDAOPsql(connection);
-        testReizigerDAO(rdao);
-        testAdresDAO(adao);
-
+        rdao.setAdao(adao);
+//        testReizigerDAO(rdao);
+        testAdresDAO(adao, rdao);
         closeConnection();
     }
 
@@ -37,7 +37,7 @@ public class Main {
         connection.close();
     }
 
-    private static void testReizigerDAO(ReizigerDAO rdao) throws SQLException {
+    private static void testReizigerDAO(ReizigerDAO rdao) {
         System.out.println("\n---------- Test ReizigerDAO -------------");
 
         // Haal alle reizigers op uit de database
@@ -52,18 +52,18 @@ public class Main {
         String gbdatum = "1981-03-14";
         Reiziger sietske = new Reiziger(6, "S", "", "Boers", java.sql.Date.valueOf(gbdatum));
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
-        rdao.save(sietske);
+//        rdao.save(sietske);
         reizigers = rdao.findAll();
         System.out.println(reizigers.size() + " reizigers\n");
 
         // Voeg aanvullende tests van de ontbrekende CRUD-operaties in.
         // Zoeken op geboortedatum
-        String gbdatum2 = "1998-08-11";
-        List<Reiziger> reizigersgb = rdao.findByGbdatum(java.sql.Date.valueOf(gbdatum2));
-        System.out.println("[Test] ReizigerDAO.findByGbdatum() geeft de volgende reizigers:");
-        for (Reiziger r2 : reizigersgb) {
-            System.out.println(r2);
-        }
+//        String gbdatum2 = "1998-08-11";
+//        List<Reiziger> reizigersgb = rdao.findByGbdatum(java.sql.Date.valueOf(gbdatum2));
+//        System.out.println("[Test] ReizigerDAO.findByGbdatum() geeft de volgende reizigers:");
+//        for (Reiziger r2 : reizigersgb) {
+//            System.out.println(r2);
+//        }
 
         // Update een reiziger
         Reiziger sietske2 = new Reiziger(6, "S", "", "Boeren", java.sql.Date.valueOf(gbdatum));
@@ -80,27 +80,36 @@ public class Main {
         System.out.println(r3);
     }
 
-    private static void testAdresDAO(AdresDAO adao) throws SQLException {
+    private static void testAdresDAO(AdresDAO adao, ReizigerDAO rdao) {
         System.out.println("\n---------- Test AdresDAO -------------");
+
 
         // Alle adressen ophalen uit de DB
         List<Adres> adressen = adao.findAll();
-        System.out.println("[Test] AdresDAO.findAll() geeft de volgende reizigers:");
+        System.out.println("[Test] AdresDAO.findAll() geeft de volgende adressen:");
         for (Adres a : adressen) {
             System.out.println(a);
         }
         System.out.println();
 
-        // Adres aanmaken en opslaan
-        Adres adres1 = new Adres(6, "4208 BJ", "90", "Ruigenhoek", "Gorinchem", 6);
-        System.out.print("[Test] Eerst " + adressen.size() + " adressen, na AdresDAO.save() ");
-        adao.save(adres1);
-        adressen = adao.findAll();
-        System.out.println(adressen.size() + " adressen\n");
-        System.out.println("[Test] AdresDAO.save() heeft het adres toegevoegd.");
+        // Reiziger toevoegen
+        Reiziger pjotr = new Reiziger(8, "P", "", "Ooms", java.sql.Date.valueOf("1999-09-09"));
+
+        // Adres aanmaken
+        Adres adres1 = new Adres(8, "4208 BJ", "90", "Ruigenhoek", "Gorinchem", 8);
+
+        // Reiziger + adres setten
+        pjotr.setAdres(adres1);
+
+        // Adres opslaan
+        List<Reiziger>reizigers = rdao.findAll();
+        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
+        rdao.save(pjotr);
+        reizigers = rdao.findAll();
+        System.out.println(reizigers.size() + " reizigers\n");
 
         // Adres updaten
-        Adres adres2 = new Adres(6, "4208 BJ", "80", "Ruigenhoek", "Gorinchem", 6);
+        Adres adres2 = new Adres(8, "4208 BJ", "80", "Ruigenhoek", "Gorinchem", 8);
         adao.update(adres2);
         System.out.println("[Test] AdresDAO.update() heeft het adres aangepast.");
 
@@ -110,9 +119,7 @@ public class Main {
 
         // Adres zoeken dmv id van reiziger
         System.out.println("[Test] AdresDAO.findById() heeft het volgende adres gevonden:");
-        String gbdatum = "1981-03-14";
-        Reiziger sietske3 = new Reiziger(6, "S", "", "Boeren", java.sql.Date.valueOf(gbdatum));
-        Adres adres3 = adao.findByReiziger(sietske3);
+        Adres adres3 = adao.findByReiziger(pjotr);
         System.out.println(adres3);
     }
 }

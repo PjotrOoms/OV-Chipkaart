@@ -58,6 +58,6 @@ public class Adres {
     }
 
     public String toString(){
-        return "Adres: #" + id + " " + postcode + " " + straat + " " + huisnummer + " " + woonplaats + ")";
+        return "   Adres: #" + id + " " + postcode + " " + straat + " " + huisnummer + " " + woonplaats + ")";
     }
 }

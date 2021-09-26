@@ -16,6 +16,10 @@ public class ReizigerDAOPsql implements ReizigerDAO{
         this.conn = conn;
     }
 
+    public void setAdao(AdresDAO adao) {
+        this.adao = adao;
+    }
+
     @Override
     public boolean save(Reiziger reiziger) {
         try {
@@ -27,6 +31,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             pstmt.setString(3, reiziger.getTussenvoegsels());
             pstmt.setString(4, reiziger.getAchternaam());
             pstmt.setDate(5, reiziger.getGeboortedatum());
+            adao.save(reiziger.getAdres());
 
             pstmt.executeUpdate();
             return true;
@@ -45,6 +50,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
 
             pstmt.setString(1, reiziger.getAchternaam());
             pstmt.setInt(2, reiziger.getId());
+            adao.update(reiziger.getAdres());
 
             pstmt.executeUpdate();
 
@@ -63,6 +69,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             PreparedStatement pstmt = conn.prepareStatement(query);
 
             pstmt.setInt(1, reiziger.getId());
+            adao.delete(reiziger.getAdres());
 
             pstmt.executeUpdate();
 
@@ -90,6 +97,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                 String gebdat = rs.getString("geboortedatum");
                 Reiziger r;
                 r = new Reiziger(reiziger_id, voorletters, tussenvoegsels, achternaam, java.sql.Date.valueOf(gebdat));
+                r.setAdres(adao.findByReiziger(r));
                 return r;
             }
 
@@ -120,6 +128,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
 
                 Reiziger r;
                 r = new Reiziger(reiziger_id, voorletters, tussenvoegsels, achternaam, java.sql.Date.valueOf(gebdat));
+                r.setAdres(adao.findByReiziger(r));
                 reizigers.add(r);
                 rs.close();
                 pstmt.close();
@@ -159,6 +168,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                 // Reizigers ophalen uit db en toevoegen aan de lijst
                 Reiziger r;
                 r = new Reiziger(reiziger_id, voorletters, tussenvoegsels, achternaam, java.sql.Date.valueOf(gebdat));
+                r.setAdres(adao.findByReiziger(r));
                 reizigers.add(r);
             }
 
