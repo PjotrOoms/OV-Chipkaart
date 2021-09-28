@@ -43,7 +43,10 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             pstmt.executeUpdate();
 
             adao.save(reiziger.getAdres());
-//            odoa.save(reiziger.getOvChipkaart());
+
+            for (OVChipkaart ovc : reiziger.getOvChipkaart()) {
+                odoa.save(ovc);
+            }
             return true;
 
         } catch (SQLException throwables) {
@@ -64,7 +67,9 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             pstmt.executeUpdate();
 
             adao.update(reiziger.getAdres());
-
+            for (OVChipkaart ovc : reiziger.getOvChipkaart()) {
+                odoa.update(ovc);
+            }
             return true;
 
         } catch (SQLException throwables) {
@@ -82,10 +87,11 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             pstmt.setInt(1, reiziger.getId());
 
             adao.delete(reiziger.getAdres());
+            for (OVChipkaart ovc : reiziger.getOvChipkaart()) {
+                odoa.delete(ovc);
+            }
 
             pstmt.executeUpdate();
-
-//            odoa.save(reiziger.getOvChipkaart());
 
             return true;
 

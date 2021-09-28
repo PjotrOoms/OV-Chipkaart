@@ -14,7 +14,7 @@ public class Reiziger {
     private String achternaam;
     private Date geboortedatum;
     private Adres adres;
-    private OVChipkaart ovChipkaart;
+    private List<OVChipkaart> ovChipkaart;
 
     public Reiziger(int id, String voorletters, String tussenvoegsels, String achternaam, Date geboortedatum) {
         this.id = id;
@@ -56,11 +56,11 @@ public class Reiziger {
         return adres;
     }
 
-    public OVChipkaart getOvChipkaart() {
+    public List<OVChipkaart> getOvChipkaart() {
         return ovChipkaart;
     }
 
-    public void setOvChipkaarten(OVChipkaart ovChipkaart) {
+    public void setOvChipkaart(List<OVChipkaart> ovChipkaart) {
         this.ovChipkaart = ovChipkaart;
     }
 

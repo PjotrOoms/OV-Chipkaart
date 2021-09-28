@@ -8,6 +8,7 @@ import P4.OVChipkaartDAO;
 import P4.OVChipkaartDOAPsql;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -20,10 +21,10 @@ public class Main {
         AdresDAO adao = new AdresDAOPsql(connection);
         OVChipkaartDAO odoa = new OVChipkaartDOAPsql(connection);
         rdao.setAdao(adao);
-//        rdao.setOdoa(odoa);
+        rdao.setOdoa(odoa);
 //        testReizigerDAO(rdao);
-        testAdresDAO(adao, rdao);
-//        testOVChipkaartDAO(rdao);
+//        testAdresDAO(rdao, adao);
+        testOVChipkaartDAO(rdao, adao, odoa);
         closeConnection();
     }
 
@@ -85,7 +86,7 @@ public class Main {
         System.out.println(r3);
     }
 
-    private static void testAdresDAO(AdresDAO adao, ReizigerDAO rdao) {
+    private static void testAdresDAO(ReizigerDAO rdao, AdresDAO adao) {
         System.out.println("\n---------- Test AdresDAO -------------");
 
 
@@ -128,7 +129,7 @@ public class Main {
         System.out.println("[Test] ReizgerDAO.delete() heeft de reiziger en het adres verwijderd.");
     }
 
-    private static void testOVChipkaartDAO(ReizigerDAO rdao){
+    private static void testOVChipkaartDAO(ReizigerDAO rdao, AdresDAO adao, OVChipkaartDAO odoa){
         System.out.println("\n---------- Test OVChipkaartDAO -------------");
 
 
@@ -138,15 +139,31 @@ public class Main {
         // Adres aanmaken
         Adres adres1 = new Adres(9, "4208 BJ", "90", "Ruigenhoek", "Gorinchem", 9);
 
+        // OVC lijst aanmaken
+        List<OVChipkaart> ovChipkaartlijst = new ArrayList<>();
+
         // OVChipkaart aanmaken
-        OVChipkaart ovChipkaart = new OVChipkaart(35283, java.sql.Date.valueOf("2021-09-09"), 2, 25.50, 9);
+        OVChipkaart ovChipkaart = new OVChipkaart(35263, java.sql.Date.valueOf("2021-09-09"), 2, 25.50, 9);
+        ovChipkaartlijst.add(ovChipkaart);
 
         // Reiziger + adres + ovchipkaart setten
         piet.setAdres(adres1);
-        piet.setOvChipkaarten(ovChipkaart);
+        piet.setOvChipkaart(ovChipkaartlijst);
 
         // Opslaan
+        List<Reiziger>reizigers = rdao.findAll();
+        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
         rdao.save(piet);
+        reizigers = rdao.findAll();
+        System.out.println(reizigers.size() + " reizigers\n");
 
+        // OVChipkaarten van reiziger zoeken
+        System.out.println("[Test] OVChipkaartDAO.findByReiziger() heeft de volgende OV Chipkaarten gevonden:");
+        List<OVChipkaart> ovChipkaartZoeken = odoa.findByReiziger(piet);
+        System.out.println(ovChipkaartZoeken);
+
+        // Reiziger (en bijbehorende adres en ov_chipkaarten deleten)
+        rdao.delete(piet);
+        System.out.println("[Test] ReizgerDAO.delete() heeft de reiziger, het adres en de ov chipkaarten verwijderd.");
     }
 }
