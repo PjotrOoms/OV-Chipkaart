@@ -39,9 +39,11 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             pstmt.setString(3, reiziger.getTussenvoegsels());
             pstmt.setString(4, reiziger.getAchternaam());
             pstmt.setDate(5, reiziger.getGeboortedatum());
-            adao.save(reiziger.getAdres());
-            odoa.save(reiziger.getOvChipkaart());
+
             pstmt.executeUpdate();
+
+            adao.save(reiziger.getAdres());
+//            odoa.save(reiziger.getOvChipkaart());
             return true;
 
         } catch (SQLException throwables) {
@@ -58,9 +60,10 @@ public class ReizigerDAOPsql implements ReizigerDAO{
 
             pstmt.setString(1, reiziger.getAchternaam());
             pstmt.setInt(2, reiziger.getId());
-            adao.update(reiziger.getAdres());
 
             pstmt.executeUpdate();
+
+            adao.update(reiziger.getAdres());
 
             return true;
 
@@ -77,10 +80,12 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             PreparedStatement pstmt = conn.prepareStatement(query);
 
             pstmt.setInt(1, reiziger.getId());
+
             adao.delete(reiziger.getAdres());
-            odoa.save(reiziger.getOvChipkaart());
 
             pstmt.executeUpdate();
+
+//            odoa.save(reiziger.getOvChipkaart());
 
             return true;
 

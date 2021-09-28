@@ -20,10 +20,10 @@ public class Main {
         AdresDAO adao = new AdresDAOPsql(connection);
         OVChipkaartDAO odoa = new OVChipkaartDOAPsql(connection);
         rdao.setAdao(adao);
-        rdao.setOdoa(odoa);
+//        rdao.setOdoa(odoa);
 //        testReizigerDAO(rdao);
         testAdresDAO(adao, rdao);
-        testOVChipkaartDAO(rdao);
+//        testOVChipkaartDAO(rdao);
         closeConnection();
     }
 
@@ -58,18 +58,17 @@ public class Main {
         String gbdatum = "1981-03-14";
         Reiziger sietske = new Reiziger(6, "S", "", "Boers", java.sql.Date.valueOf(gbdatum));
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
-//        rdao.save(sietske);
+        rdao.save(sietske);
         reizigers = rdao.findAll();
         System.out.println(reizigers.size() + " reizigers\n");
 
-        // Voeg aanvullende tests van de ontbrekende CRUD-operaties in.
         // Zoeken op geboortedatum
-//        String gbdatum2 = "1998-08-11";
-//        List<Reiziger> reizigersgb = rdao.findByGbdatum(java.sql.Date.valueOf(gbdatum2));
-//        System.out.println("[Test] ReizigerDAO.findByGbdatum() geeft de volgende reizigers:");
-//        for (Reiziger r2 : reizigersgb) {
-//            System.out.println(r2);
-//        }
+        String gbdatum2 = "1998-08-11";
+        List<Reiziger> reizigersgb = rdao.findByGbdatum(java.sql.Date.valueOf(gbdatum2));
+        System.out.println("[Test] ReizigerDAO.findByGbdatum() geeft de volgende reizigers:");
+        for (Reiziger r2 : reizigersgb) {
+            System.out.println(r2);
+        }
 
         // Update een reiziger
         Reiziger sietske2 = new Reiziger(6, "S", "", "Boeren", java.sql.Date.valueOf(gbdatum));
@@ -119,14 +118,14 @@ public class Main {
         adao.update(adres2);
         System.out.println("[Test] AdresDAO.update() heeft het adres aangepast.");
 
-        // Adres deleten
-//        adao.delete(adres2);
-//        System.out.println("[Test] AdresDAO.save() heeft het adres verwijderd.");
-
         // Adres zoeken dmv id van reiziger
         System.out.println("[Test] AdresDAO.findById() heeft het volgende adres gevonden:");
         Adres adres3 = adao.findByReiziger(pjotr);
         System.out.println(adres3);
+
+        // Reiziger deleten
+        rdao.delete(pjotr);
+        System.out.println("[Test] ReizgerDAO.delete() heeft de reiziger en het adres verwijderd.");
     }
 
     private static void testOVChipkaartDAO(ReizigerDAO rdao){
