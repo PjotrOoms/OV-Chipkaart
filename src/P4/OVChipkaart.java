@@ -1,8 +1,10 @@
 package P4;
 
 import P2.Reiziger;
+import P5.Product;
 
 import java.sql.Date;
+import java.util.List;
 
 public class OVChipkaart {
     private int kaart_nummer;
@@ -11,6 +13,7 @@ public class OVChipkaart {
     private double saldo;
     private int reiziger_id;
     private Reiziger reiziger;
+    private List<Product> producten;
 
     public OVChipkaart(int kaart_nummer, Date geldig_tot, int klasse, double saldo, int reiziger_id) {
         this.kaart_nummer = kaart_nummer;
@@ -58,6 +61,14 @@ public class OVChipkaart {
 
     public void setReiziger_id(int reiziger_id) {
         this.reiziger_id = reiziger_id;
+    }
+
+    public List<Product> getProducten() {
+        return producten;
+    }
+
+    public void setProducten(List<Product> producten) {
+        this.producten = producten;
     }
 
     @Override

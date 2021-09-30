@@ -5,7 +5,10 @@ import P3.AdresDAO;
 import P3.AdresDAOPsql;
 import P4.OVChipkaart;
 import P4.OVChipkaartDAO;
-import P4.OVChipkaartDOAPsql;
+import P4.OVChipkaartDAOPsql;
+import P5.Product;
+import P5.ProductDAO;
+import P5.ProductDAOPsql;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,12 +22,14 @@ public class Main {
         getConnection();
         ReizigerDAOPsql rdao = new ReizigerDAOPsql(connection);
         AdresDAO adao = new AdresDAOPsql(connection);
-        OVChipkaartDAO odoa = new OVChipkaartDOAPsql(connection);
+        OVChipkaartDAO odao = new OVChipkaartDAOPsql(connection);
+        ProductDAOPsql pdao = new ProductDAOPsql(connection);
         rdao.setAdao(adao);
-        rdao.setOdoa(odoa);
+        rdao.setOdoa(odao);
 //        testReizigerDAO(rdao);
 //        testAdresDAO(rdao, adao);
-        testOVChipkaartDAO(rdao, adao, odoa);
+//        testOVChipkaartDAO(rdao, adao, odao);
+        testProductDAO(pdao);
         closeConnection();
     }
 
@@ -129,7 +134,7 @@ public class Main {
         System.out.println("[Test] ReizgerDAO.delete() heeft de reiziger en het adres verwijderd.");
     }
 
-    private static void testOVChipkaartDAO(ReizigerDAO rdao, AdresDAO adao, OVChipkaartDAO odoa){
+    private static void testOVChipkaartDAO(ReizigerDAO rdao, AdresDAO adao, OVChipkaartDAO odao){
         System.out.println("\n---------- Test OVChipkaartDAO -------------");
 
 
@@ -159,11 +164,49 @@ public class Main {
 
         // OVChipkaarten van reiziger zoeken
         System.out.println("[Test] OVChipkaartDAO.findByReiziger() heeft de volgende OV Chipkaarten gevonden:");
-        List<OVChipkaart> ovChipkaartZoeken = odoa.findByReiziger(piet);
+        List<OVChipkaart> ovChipkaartZoeken = odao.findByReiziger(piet);
         System.out.println(ovChipkaartZoeken);
 
         // Reiziger (en bijbehorende adres en ov_chipkaarten deleten)
         rdao.delete(piet);
         System.out.println("[Test] ReizgerDAO.delete() heeft de reiziger, het adres en de ov chipkaarten verwijderd.");
+    }
+
+    private static void testProductDAO(ProductDAO pdao) {
+        System.out.println("\n---------- Test ProductDAO -------------");
+
+        // Product toevoegen
+        Product p1 = new Product(7, "Weekkaart", "Een hele week onberperkt reizen met heet openbaar vervoer", 420.00);
+
+        // OVC lijst aanmaken
+        ArrayList<OVChipkaart> ovChipkaartlijst = new ArrayList<>();
+
+        // OVChipkaart aanmaken
+        OVChipkaart ovChipkaart = new OVChipkaart(35283, java.sql.Date.valueOf("2018-05-31"), 2, 25.50, 2);
+        ovChipkaartlijst.add(ovChipkaart);
+
+        // OVChipkaart + product setten
+        p1.setOvChipkaarten(ovChipkaartlijst);
+
+        // Opslaan
+        List<Product>producten = pdao.findAll();
+        System.out.print("[Test] Eerst " + producten.size() + " producten, na ProductDAO.save() ");
+        pdao.save(p1);
+        producten = pdao.findAll();
+        System.out.println(producten.size() + " producten\n");
+
+        // Update
+        Product p2 = new Product(7, "Weekkaart", "Een hele week onberperkt reizen met het openbaar vervoer", 200.00);
+        pdao.update(p2);
+        System.out.println("[Test] ProductDAO.update() heeft het product aangepast.");
+
+        // Alle producten van 1 ovchipkaart zoeken
+        System.out.println("[Test] ProductDAO.findByOVChipkaart() heeft de volgende producten gevonden:");
+        List<Product> productenzoeken = pdao.findByOVChipkaart(ovChipkaart);
+        System.out.println(productenzoeken);
+
+        // Product delete
+        pdao.delete(p2);
+        System.out.println("[Test] ProductDAO.delete() heeft het product verwijderd.");
     }
 }
