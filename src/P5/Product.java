@@ -59,8 +59,20 @@ public class Product {
         this.ovChipkaarten = ovChipkaarten;
     }
 
+    public void voegOvChipkaartToe(OVChipkaart ovChipkaart) {
+        ovChipkaarten.add(ovChipkaart);
+    }
+
+    public void verwijderOvChipkaartToe(OVChipkaart ovChipkaart) {
+        ovChipkaarten.remove(ovChipkaart);
+    }
+
     @Override
     public String toString() {
-        return "Product: #" + product_nummer + " naam: " + naam + ", beschrijving: " + beschrijving + ", prijs = " + prijs + "\n";
+        String ovChipkaart = "";
+        for (OVChipkaart ovc : ovChipkaarten) {
+            ovChipkaart += ovc.getKaart_nummer() + " - ";
+        }
+        return "Product: #" + product_nummer + " naam: " + naam + ", beschrijving: " + beschrijving + ", prijs = " + prijs + ", OV-Chipkaarten = " + ovChipkaart;
     }
 }

@@ -208,5 +208,12 @@ public class Main {
         // Product delete
         pdao.delete(p2);
         System.out.println("[Test] ProductDAO.delete() heeft het product verwijderd.");
+
+        // Alle producten ophalen uit de DB
+        System.out.println("[Test] ProductDAO.findAll() geeft de volgende producten:");
+        for (Product pr : producten) {
+            System.out.println(pr);
+        }
+        System.out.println();
     }
 }

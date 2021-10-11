@@ -97,7 +97,12 @@ public class ProductDAOPsql implements ProductDAO {
     @Override
     public List<Product> findByOVChipkaart(OVChipkaart ovChipkaart) {
         try {
-            String query = "SELECT ov_chipkaart_product.kaart_nummer, ov_chipkaart_product.product_nummer, product.naam, product.beschrijving, product.prijs FROM product JOIN ov_chipkaart_product ON product.product_nummer = ov_chipkaart_product.product_nummer WHERE kaart_nummer = ?";
+            String query = "SELECT ov_chipkaart_product.kaart_nummer, ov_chipkaart_product.product_nummer, product.naam, product.beschrijving, product.prijs " +
+                    "FROM product " +
+                    "JOIN ov_chipkaart_product ON product.product_nummer = ov_chipkaart_product.product_nummer " +
+                    "WHERE ov_chipkaart_product.kaart_nummer = ? " +
+                    "ORDER BY kaart_nummer, product_nummer;";
+
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setInt(1, ovChipkaart.getKaart_nummer());
             ResultSet rs = pstmt.executeQuery();
@@ -110,8 +115,9 @@ public class ProductDAOPsql implements ProductDAO {
                 String naam = rs.getString("naam");
                 String beschrijving = rs.getString("beschrijving");
                 double prijs = rs.getDouble("prijs");
-                Product a = new Product(product_nummer, naam, beschrijving, prijs);
-                producten.add(a);
+                Product product = new Product(product_nummer, naam, beschrijving, prijs);
+                product.voegOvChipkaartToe(ovChipkaart);
+                producten.add(product);
             }
 
             rs.close();
@@ -127,7 +133,12 @@ public class ProductDAOPsql implements ProductDAO {
     @Override
     public List<Product> findAll() {
         try {
-            String query = "SELECT * FROM product";
+            String query = "SELECT ov_chipkaart_product.kaart_nummer, product.naam, product.beschrijving, product.prijs, ov_chipkaart_product.product_nummer, ov_chipkaart.geldig_tot, ov_chipkaart.klasse, ov_chipkaart.saldo, ov_chipkaart.reiziger_id " +
+                    "FROM product " +
+                    "JOIN ov_chipkaart_product ON product.product_nummer = ov_chipkaart_product.product_nummer " +
+                    "JOIN ov_chipkaart ON ov_chipkaart_product.kaart_nummer = ov_chipkaart.kaart_nummer " +
+                    "ORDER BY kaart_nummer, product_nummer;";
+
             PreparedStatement pstmt = conn.prepareStatement(query);
             ResultSet rs = pstmt.executeQuery();
 
@@ -139,8 +150,23 @@ public class ProductDAOPsql implements ProductDAO {
                 String naam = rs.getString("naam");
                 String beschrijving = rs.getString("beschrijving");
                 double prijs = rs.getDouble("prijs");
-                Product a = new Product(product_nummer, naam, beschrijving, prijs);
-                producten.add(a);
+                Product product = new Product(product_nummer, naam, beschrijving, prijs);
+
+                int kaart_nummer = rs.getInt("kaart_nummer");
+                Date geldig_tot = rs.getDate("geldig_tot");
+                int klasse = rs.getInt("klasse");
+                float saldo = rs.getFloat("saldo");
+                int reiziger_id = rs.getInt("reiziger_id");
+                OVChipkaart ovc = new OVChipkaart(kaart_nummer, geldig_tot, klasse, saldo, reiziger_id);
+
+                for (Product pr : producten) {
+                    if (pr.getProduct_nummer() == pr.getProduct_nummer()) {
+                        pr.voegOvChipkaartToe(ovc);
+                        break;
+                    }
+                }
+                product.voegOvChipkaartToe(ovc);
+                producten.add(product);
             }
 
             rs.close();
